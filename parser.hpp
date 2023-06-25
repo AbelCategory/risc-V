@@ -2,6 +2,7 @@
 #define __parser__
 
 #include "def.hpp"
+#include "memory.hpp"
 
 #define LUI  0b0110111
 #define AUI  0b0010111
@@ -69,12 +70,12 @@ u32 get_imm(u32 op, u32 x){
 }
 
 struct ins{
-    u32 opt, t;
+    u32 opt, t, pc;
     u32 rs1, rs2, rd;
     u32 im; u32 op;
-    ins(){opt = rs1 = rs2 = im = op = 0;}
-    ins(u32 x){
-        op = get_type(x);
+    ins(){opt = t = pc = rs1 = rs2 = rd = im = op = 0;}
+    ins(u32 p, u32 x){
+        op = get_type(x); pc = p;
         if(op == U || op == J) rs1 = rs2 = 0;
         else{
             rs1 = get_num(x, 15, 19);
@@ -94,4 +95,26 @@ struct ins{
         else im = get_imm(op, x);
     }
 };
+
+static const int len = 16;
+struct Ins{
+    ins a[len];
+    u32 l = 0, sz = 0;
+    bool ok;
+    Ins(){ok = 1; memset(a, 0, sizeof(a));}
+    bool full(){return sz == len;}
+    inline void get_next(){
+        if(!ok || full()) return;
+        ++sz; int p = (l + sz - 1) % len;
+        a[p] = ins(pc, M.get_ins(pc));
+        if(a[p].op == U) ok = 0;
+        else pc += 4;
+    }
+    inline void pop(){
+        sz--; l = (l + 1) % len;
+    }
+    inline void  reok(){
+        ok = 0;
+    }
+}Q;
 #endif

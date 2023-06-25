@@ -38,7 +38,7 @@ inline void I_ALU(u32 rs1, u32 im, ins &s, u32 &rd){
     }
 }
 
-inline void B_ALU(u32 rs1, u32 rs2, u32 im, ins &s, u32 &rd){
+inline void B_ALU(u32 rs1, u32 rs2, u32 im, ins &s, u32 &rd, u32 &pc){
     switch(s.opt){
         case BEQ : (rs1 == rs2) && (rd = 1, pc += im); break;
         case BNE : (rs1 != rs2) && (rd = 1, pc += im); break;
@@ -49,7 +49,25 @@ inline void B_ALU(u32 rs1, u32 rs2, u32 im, ins &s, u32 &rd){
     }
 }
 
+inline void J_exe(u32 &rd, u32 im, ins &s, u32 &pc){
+    rd = pc + 4;
+    pc += sext_21(im);
+}
+
+inline void U_exe(u32 &rd, u32 im, ins &s, const u32 &pc){
+    switch(s.opt){
+        case LUI: rd = im << 12; break;
+        case AUI: rd = pc + (im << 12); break;
+    }
+}
+
 struct ALU{
+    bool busy;
+    ins s;
+};
+
+struct ins_sta{
+    bool busy, st;
     
 };
 
