@@ -1,5 +1,5 @@
-#ifndef __parse__
-#define __parse__
+#ifndef __parser__
+#define __parser__
 
 #include "def.hpp"
 
@@ -48,11 +48,9 @@
 #define U 0b100
 #define J 0b101
 
-typedef u32 = unsigned;
-
 u32 get_type(u32 x){
     u32 t = x & 127;
-    if(t == LUI || t == AUIPC) return U;
+    if(t == LUI || t == AUI) return U;
     if(t == JAL) return J;
     if(t == JALR || t == 0b0000011) return I;
     if(t == 0b0100011) return S;
@@ -63,22 +61,37 @@ u32 get_imm(u32 op, u32 x){
     switch(op){
         case I: return get_num(x, 20, 31);
         case S: return get_num(x, 7, 11) | get_num(x, 5, 11) << 5;
-        case B: return get_num(x, 8, 11) << 1 | get_num(x, 25, 30) << 5 | get_num(x, 7, 7) << 11 | get_num(x, 31, 31) << ;
-        case U: return get_num();
-        case 
+        case B: return get_num(x, 8, 11) << 1 | get_num(x, 25, 30) << 5 | get_num(x, 7, 7) << 11 | get_num(x, 31, 31) << 12;
+        case U: return get_num(x, 12, 31) << 12;
+        case J: return get_num(x, 21, 30) << 1 | get_num(x, 20, 20) << 11 | get_num(x, 12, 19) << 12 | get_num(x, 31, 31) << 20;
         case R: return 0;
     }
 }
 
 struct ins{
-    u32 opt;
-    u32 rs1, rs2;
+    u32 opt, t;
+    u32 rs1, rs2, rd;
     u32 im; u32 op;
     ins(){opt = rs1 = rs2 = im = op = 0;}
     ins(u32 x){
         op = get_type(x);
-        im = get_imm(op, x);
-        if(t != U || t != J) 
+        if(op == U || op == J) rs1 = rs2 = 0;
+        else{
+            rs1 = get_num(x, 15, 19);
+            if(op == I) rs2 = 0;
+            else rs2 = get_num(x, 20, 24);
+        }
+        t = x & 127;
+        if(op == U || op == J) opt = t;
+        else if(op == I){
+            if(t == JALR) opt = JALR;
+            else opt = get_num(x, 27, 30) | get_num(x, 12, 14);
+        }
+        if(op != B && op != S) rd = get_num(x, 7, 11);
+        else if(op == B || op == S) opt = get_num(x, 12, 14);
+        else if(op == R) opt = get_num(x, 27, 30) | get_num(x, 12, 14);
+        if(op == I && (opt == SLLI || opt == SRLI || opt == SRAI)) im = get_num(x, 20, 24);
+        else im = get_imm(op, x);
     }
 };
 #endif
