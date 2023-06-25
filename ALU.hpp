@@ -61,14 +61,4 @@ inline void U_exe(u32 &rd, u32 im, ins &s, const u32 &pc){
     }
 }
 
-struct ALU{
-    bool busy;
-    ins s;
-};
-
-struct ins_sta{
-    bool busy, st;
-    
-};
-
 #endif

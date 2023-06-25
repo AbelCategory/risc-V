@@ -2,7 +2,6 @@
 #include "memory.hpp"
 #include "parser.hpp"
 
-Mem M;
 int main(){
     M.init();
     while(1){

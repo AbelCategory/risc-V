@@ -59,6 +59,6 @@ struct Mem{
     inline u32 get_ins(u32 x){
         return lw(x);
     }
-};
+}M;
 
 #endif

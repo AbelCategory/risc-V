@@ -113,8 +113,11 @@ struct Ins{
     inline void pop(){
         sz--; l = (l + 1) % len;
     }
-    inline void  reok(){
-        ok = 0;
+    inline void clear(u32 &pos){
+        l = sz = 0; ok = 1; pc = pos;
     }
-}Q;
+    inline void reok(u32 &pos){
+        ok = 1; pc = pos;
+    }
+};
 #endif

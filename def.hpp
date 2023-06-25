@@ -31,4 +31,8 @@ struct reg{
     int pos;
 }f[32];
 
+struct CDB{
+    u32 en, val, pc;
+};
+
 #endif
