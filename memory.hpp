@@ -5,6 +5,7 @@
 #include <cstring>
 #include <string>
 #include "def.hpp"
+#include "parser.hpp"
 
 const static int N = 100010;
 

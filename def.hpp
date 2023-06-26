@@ -1,6 +1,8 @@
 #ifndef __defi__
 #define __defi__
 
+#include <cstring>
+
 using u32 = unsigned;
 using uc = unsigned char;
 
@@ -25,7 +27,7 @@ inline u32 get_num(u32 x, int l, int r){
 }
 
 u32 pc = 0;
-u32 x[32];
+u32 r[32];
 struct reg{
     bool busy;
     int pos;
@@ -33,6 +35,21 @@ struct reg{
 
 struct CDB{
     u32 en, val, pc;
+};
+
+static const int siz = 4096;
+struct Ba{
+    u32 a[siz];
+    Ba(){memset(a, 0, sizeof(a));}
+    bool gue(u32 x){
+        u32 t = x & 0x0fff;
+        return a[t] > 1;
+    }
+    void upd(u32 x, bool ok){
+        u32 t = x & 0x0fff;
+        if(ok && a[t] == 2) ++a[t];
+        else if(!ok && a[t] == 1) --a[t]; 
+    }
 };
 
 #endif

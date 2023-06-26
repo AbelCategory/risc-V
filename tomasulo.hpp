@@ -6,18 +6,8 @@
 #include "reservation_station.hpp"
 #include "parser.hpp"
 
-struct bus{
-    ROB r;
-    LS X;
-    RS Y;
-    Ins Q;
-    void fetch(){
-        Q.get_next();
-    }
-    void run(){
-        
-    }
-};
-
+LS X;
+RS Y;
+ROB Z;
 
 #endif

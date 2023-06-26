@@ -97,7 +97,7 @@ struct ins{
 };
 
 static const int len = 16;
-struct Ins{
+/*struct Ins{
     ins a[len];
     u32 l = 0, sz = 0;
     bool ok;
@@ -119,5 +119,7 @@ struct Ins{
     inline void reok(u32 &pos){
         ok = 1; pc = pos;
     }
-};
+};*/
+
+
 #endif

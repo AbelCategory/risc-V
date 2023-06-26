@@ -2,6 +2,7 @@
 #define __ALU__
 
 #include "parser.hpp"
+#include "memory.hpp"
 
 inline void R_ALU(u32 rs1, u32 rs2, ins &s, u32 &rd){
     switch(s.opt){
@@ -54,10 +55,28 @@ inline void J_exe(u32 &rd, u32 im, ins &s, u32 &pc){
     pc += sext_21(im);
 }
 
-inline void U_exe(u32 &rd, u32 im, ins &s, const u32 &pc){
+// inline void U_exe(u32 &rd, u32 im, ins &s, const u32 &pc){
+//     switch(s.opt){
+//         case LUI: rd = im << 12; break;
+//         case AUI: rd = pc + (im << 12); break;
+//     }
+// }
+
+inline void Load_exe(u32 rs1, u32 im, ins &s, u32 &rd){
     switch(s.opt){
-        case LUI: rd = im << 12; break;
-        case AUI: rd = pc + (im << 12); break;
+        case LB: rd = M.lb(rs1 + sext_12(im)); break;
+        case LH: rd = M.lh(rs1 + sext_12(im)); break;
+        case LW: rd = M.lw(rs1 + sext_12(im)); break;
+        case LBU: rd = M.lbu(rs1 + sext_12(im)); break;
+        case LHU: rd = M.lhu(rs1 + sext_12(im)); break;
+    }
+}
+
+inline void Store_exe(u32 rs1, u32 rs2, ins &s, u32 im){
+    switch(s.opt){
+        case SB: M.sb(rs1 + sext_12(im), rs2); break;
+        case SH: M.sh(rs1 + sext_12(im), rs2); break;
+        case SW: M.sw(rs1 + sext_12(im), rs2); break;
     }
 }
 
