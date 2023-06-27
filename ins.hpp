@@ -15,6 +15,7 @@ void fetch_ins(){
         return;
     }
     ins s(pc, M.get_ins(pc));
+    if(Z.full()) return;
     if(s.op == U){
         ROB_dat x(s, s.rd, pc);
         x.sta = 1;
@@ -31,59 +32,92 @@ void fetch_ins(){
         pc += s.im;
     }
     else if(s.op == R){
-        
+        if(Y.full()) return;
+        ROB_dat x(s, s.rd, pc);
+        RS_dat y; y.busy = 0;
+        int rs1 = s.rs1, rs2 = s.rs2;
+        y.qj = y.qk = -1; y.s = s;
+        if(!r.busy[rs1]) y.vj = r[rs1];
+        else if(Z[r.a[rs1]].sta) y.vj = Z[r.a[rs1]].val;
+        else y.busy = 1, y.qj = r.a[rs1];
+        if(!r.busy[rs2]) y.vk = r[rs2];
+        else if(Z[r.a[rs2]].sta) y.vk = Z[r.a[rs2]].val;
+        else y.busy = 1, y.qk = r.a[rs2];
+        y.en = Z.push(x);
+        Y.push(y);
+        pc += 4;
     }
     else if(s.op == B){
+        if(Y.full()) return;
         ROB_dat x(s, 0, pc);
         RS_dat y; y.busy = 0;
         int rs1 = s.rs1, rs2 = s.rs2;
         y.qj = y.qk = -1; y.s = s;
-        if(!f[rs1].busy) y.vj = r[rs1];
-        else if(Z[f[rs1].pos].sta) y.vj = Z[f[rs1].pos].val;
-        else y.busy = 1, y.qj = f[rs1].pos;
-        if(!f[rs2].busy) y.vk = r[rs2];
-        else if(Z[f[rs2].pos].sta) y.vk = Z[f[rs2].pos].val;
-        else y.busy = 1, y.qk = f[rs2].pos;
+        if(!r.busy[rs1]) y.vj = r[rs1];
+        else if(Z[r.a[rs1]].sta) y.vj = Z[r.a[rs1]].val;
+        else y.busy = 1, y.qj = r.a[rs1];
+        if(!r.busy[rs2]) y.vk = r[rs2];
+        else if(Z[r.a[rs2]].sta) y.vk = Z[r.a[rs2]].val;
+        else y.busy = 1, y.qk = r.a[rs2];
+        bool t = Br.gue(pc); x.val = t;
+        x.des = t;
         y.en = Z.push(x);
         Y.push(y);
+        if(t) pc += 4;
+        else pc += s.im;
     }
     else if(s.op == S){
-        ROB_dat x(s, 0, pc);
+        if(X.full()) return;
+         ROB_dat x(s, 0, pc);
         LS_dat y; y.sta = 2;
         int rs1 = s.rs1, rs2 = s.rs2;
         y.qj = y.qk = -1; y.s = s;
-        if(!f[rs1].busy) y.vj = r[rs1];
-        else if(Z[f[rs1].pos].sta) y.vj = Z[f[rs1].pos].val;
-        else y.sta = 1, y.qj = f[rs1].pos;
-        if(!f[rs2].busy) y.vk = r[rs2];
-        else if(Z[f[rs2].pos].sta) y.vk = Z[f[rs2].pos].val;
-        else y.sta = 1, y.qk = f[rs2].pos;
+        if(!r.busy[rs1]) y.vj = r[rs1];
+        else if(Z[r.a[rs1]].sta) y.vj = Z[r.a[rs1]].val;
+        else y.sta = 1, y.qj = r.a[rs1];
+        if(!r.busy[rs2]) y.vk = r[rs2];
+        else if(Z[r.a[rs2]].sta) y.vk = Z[r.a[rs2]].val;
+        else y.sta = 1, y.qk = r.a[rs2];
         y.en = Z.push(x);
         X.push(y);
     }
     else if(s.t == 0b0000011){
+        if(X.full()) return;
+        ROB_dat x(s, s.rd, pc);
+        LS_dat y; y.sta = 2;
+        int rs = s.rs1;
+        y.qj = y.qk = -1; y.s = s;
+        if(!r.busy[rs]) y.vj = r[rs];
+        else if(Z[r.a[rs]].sta) y.vj = Z[r.a[rs]].val;
+        else y.sta = 1, y.qj = r.a[rs];
+        y.en = Z.push(x);
+        X.push(y);
+    }
+    else if(s.opt == JALR){
         ROB_dat x(s, s.rd, pc);
         x.val = pc + 4;
         int rs = s.rs1;
         Z.push(x);
-        if(!f[rs].busy) pc += r[rs];
-        else if(Z[f[rs].pos].sta) pc += Z[f[rs].pos].val;
+        if(!r.busy[rs]) pc += r[rs];
+        else if(Z[r.a[rs]].sta) pc += Z[r.a[rs]].val;
         else{
             ok = 0;
             imm = s.im;
-            ps = f[rs].pos;
+            ps = r.a[rs];
         }
     }
-    else if(s.opt == JALR){
-        ok = 0;
-    }
     else{
-
+        if(X.full()) return;
+        ROB_dat x(s, 0, pc);
+        RS_dat y; y.busy = 0;
+        int rs = s.rs1;
+        y.qj = y.qk = -1; y.s = s; y.vk = s.im;
+        if(!r.busy[rs]) y.vj = r[rs];
+        else if(Z[r.a[rs]].sta) y.vj = Z[r.a[rs]].val;
+        else y.busy = 1, y.qj = r.a[rs];
+        y.en = Z.push(x);
+        Y.push(y);
     }
-}
-
-inline void reok(u32 pos){
-    ok = 1; pc = pos;
 }
 
 #endif

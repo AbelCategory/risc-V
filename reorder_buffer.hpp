@@ -18,12 +18,17 @@ struct ROB_dat{
 static const int len = 32;
 
 struct ROB{
-    ROB_dat a[len];
-    int l, sz;
-    ROB(){l = sz = 0;}
+    ROB_dat a[len], b[len];
+    int l, sz, nl, nsz;
+    ROB(){l = sz = nl = nsz = 0;}
     bool full(){return sz == len;}
     inline void pop(){
-        l = (l + 1) % len; --sz;
+        nl = (nl + 1) % len; --nsz;
+    }
+    void next_cur(){
+        for(int i = 0; i < len; ++i)
+            a[i] = b[i];
+        l = nl; sz = nsz;
     }
     inline ROB_dat top(){return a[l];}
     inline void clear(){
@@ -35,25 +40,39 @@ struct ROB{
         l = sz = 0;
         for(int i = 0; i < len; ++i) a[i].sta = 0;
     }
-    int push(ROB_dat &r){
-        ++sz; int p = (l + sz - 1) % len;
-        a[p] = r; a[p].en = p;
-        if(r.s.op != S &&r.s.op != B){
-            f[r.s.rd].busy = 1;
-            f[r.s.rd].pos = p;
-        }
+    int push(ROB_dat &x){
+        ++nsz; int p = (nl + nsz - 1) % len;
+        b[p] = x; b[p].en = p;
+        if(x.s.op != S &&x.s.op != B) r.upd(x.s.rd, p);
         return p;
-    }
-    void mod(CDB c){
-        a[c.en].sta = 1;
-        a[c.en].val = c.val;
-        if(a[c.en].s.op == B || a[c.en].s.opt == JAL || a[c.en].s.opt == AUI){
-            a[c.en].dpc = c.pc;
-            if(a[c.en].s.op != B) reok(c.pc);
-        }
     }
     inline ROB_dat& operator [](int x){
         return a[x];
+    }
+    inline void commit(){
+        if(sz && a[l].sta){
+            if(a[l].s.op == 233){
+                printf("%u\n", (r[10])&255u);
+                exit(0);
+            }
+            else if(a[l].s.op == B){
+                Br.upd(a[l].pc, a[l].val);
+                if(a[l].val != a[l].des){
+                    clear();
+                    X.reset();
+                    Y.reset();
+                }
+            }
+            else if(a[l].s.op == S){
+                X.commit(l);
+            }
+            else{
+                // r[a[l].des] = a[l].val;
+                r.mod(a[l].des, a[l].en, a[l].val);
+                // if(f[a[l].des].pos == a[l].en) f[a[l].des].busy = 0;
+            }
+            pop();
+        }
     }
 };
 

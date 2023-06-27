@@ -27,11 +27,36 @@ inline u32 get_num(u32 x, int l, int r){
 }
 
 u32 pc = 0;
-u32 r[32];
+// u32 r[32];
+// struct reg{
+//     bool busy;
+//     int pos;
+// }f[32];
+
+static const int L = 32;
 struct reg{
-    bool busy;
-    int pos;
-}f[32];
+    u32 r[L], s[L];
+    bool busy[L], nb[L];
+    int a[L], b[L];
+    void next_cur(){
+        for(int i = 0; i < L; ++i){
+            a[i] = b[i];
+            r[i] = s[i];
+            busy[i] = nb[i];
+        }
+    }
+    inline u32& operator [](int x){
+        return r[x];
+    }
+    inline void upd(int x, u32 p){
+        b[x] = p;
+        nb[x] = 1;
+    }
+    inline void mod(int x, u32 p, u32 v){
+        s[x] = v;
+        nb[x] = p != a[x];
+    }
+}r;
 
 struct CDB{
     u32 en, val, pc;
@@ -50,6 +75,6 @@ struct Ba{
         if(ok && a[t] == 2) ++a[t];
         else if(!ok && a[t] == 1) --a[t]; 
     }
-};
+}Br;
 
 #endif

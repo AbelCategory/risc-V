@@ -2,26 +2,64 @@
 #define __reservation__
 
 #include "ALU.hpp"
+#include "tomasulo.hpp"
 
 struct RS_dat{
-    bool busy;
+    int busy;
     ins s;
-    u32 qj, qk, vj, vk, en;
-    RS_dat():busy(0),qj(0),qk(0),vj(0),vk(0), en(0){}
+    u32 vj, vk, en; int qj, qk;
+    RS_dat():busy(-1),qj(0),qk(0),vj(0),vk(0), en(0){}
 };
 
 static const int len = 16;
 
 struct RS{
-    RS_dat a[len];
+    RS_dat a[len], b[len];
+    int sz = 0, nsz = 0;
     RS(){}
+    bool full(){return len == sz;}
+    void next_cur(){
+        for(int i = 0; i < len; ++i)
+            a[i] = b[i];
+        sz = nsz;
+    }
     void push(RS_dat y){
-        
+        for(int i = 0; i < len; ++i)
+            if(a[i].busy == -1){
+                b[i] = y; ++sz;
+                break;
+            }
     }
     void exe(){
-
+        int cnt = 0;
+        for(int i = 0; i < len; ++i) if(a[i].busy == 0){
+            ROB_dat &cur = Z.b[a[i].en];
+            switch(a[i].s.op){
+                case R: R_ALU(a[i].vj, a[i].vk, a[i].s, cur.val);
+                case I: I_ALU(a[i].vj, a[i].vk, a[i].s, cur.val);
+                case B: B_ALU(a[i].vj, a[i].vk, a[i].s.im, a[i].s, cur.val, cur.dpc);
+            }
+            b[i].busy = -1; cur.sta++; cur.sta = 1;
+            --nsz;
+        }
     }
-    
+    void upd(){
+        int cnt = 0;
+        for(int i = 0; i < len; ++i) if(b[i].busy == 1){
+            if(b[i].qj != -1 && Z[b[i].qj].sta){
+                b[i].qj = -1;
+                b[i].vj = Z[a[i].qj].val;
+            }
+            if(b[i].qk != -1 && Z[b[i].qk].sta){
+                b[i].qk = -1;
+                b[i].vk = Z[a[i].qk].val;
+            }
+            if(b[i].qj == -1 && b[i].qk == -1) b[i].busy = 0;
+        }
+    }
+    void reset(){
+        for(int i = 0; i < len; ++i) b[i] = RS_dat();
+    }
 };
 
 #endif

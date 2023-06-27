@@ -50,10 +50,10 @@ inline void B_ALU(u32 rs1, u32 rs2, u32 im, ins &s, u32 &rd, u32 &pc){
     }
 }
 
-inline void J_exe(u32 &rd, u32 im, ins &s, u32 &pc){
-    rd = pc + 4;
-    pc += sext_21(im);
-}
+// inline void J_exe(u32 &rd, u32 im, ins &s, u32 &pc){
+//     rd = pc + 4;
+//     pc += sext_21(im);
+// }
 
 // inline void U_exe(u32 &rd, u32 im, ins &s, const u32 &pc){
 //     switch(s.opt){
