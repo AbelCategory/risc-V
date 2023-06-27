@@ -2,7 +2,7 @@
 #define __reservation__
 
 #include "ALU.hpp"
-#include "tomasulo.hpp"
+#include "reorder_buffer.hpp"
 
 struct RS_dat{
     int busy;
@@ -11,9 +11,9 @@ struct RS_dat{
     RS_dat():busy(-1),qj(0),qk(0),vj(0),vk(0), en(0){}
 };
 
-static const int len = 16;
 
 struct RS{
+    static const int len = 32;
     RS_dat a[len], b[len];
     int sz = 0, nsz = 0;
     RS(){}
@@ -39,20 +39,21 @@ struct RS{
                 case I: I_ALU(a[i].vj, a[i].vk, a[i].s, cur.val);
                 case B: B_ALU(a[i].vj, a[i].vk, a[i].s.im, a[i].s, cur.val, cur.dpc);
             }
-            b[i].busy = -1; cur.sta++; cur.sta = 1;
+            c[sze ++] = (CDB){a[i].en, cur.pc, cur.val};
+            b[i].busy = -1; cur.sta = 1;
             --nsz;
         }
     }
-    void upd(){
+    void upd(CDB c){
         int cnt = 0;
         for(int i = 0; i < len; ++i) if(b[i].busy == 1){
-            if(b[i].qj != -1 && Z[b[i].qj].sta){
+            if(b[i].qj != -1 && a[i].qj == c.en){
                 b[i].qj = -1;
-                b[i].vj = Z[a[i].qj].val;
+                b[i].vj = c.val;
             }
-            if(b[i].qk != -1 && Z[b[i].qk].sta){
+            if(b[i].qk != -1 && a[i].qk == c.en){
                 b[i].qk = -1;
-                b[i].vk = Z[a[i].qk].val;
+                b[i].vk = c.val;
             }
             if(b[i].qj == -1 && b[i].qk == -1) b[i].busy = 0;
         }

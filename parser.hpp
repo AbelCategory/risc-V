@@ -2,7 +2,6 @@
 #define __parser__
 
 #include "def.hpp"
-#include "memory.hpp"
 
 #define LUI  0b0110111
 #define AUI  0b0010111

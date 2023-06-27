@@ -1,0 +1,3 @@
+/mnt/d/RISCV/RISC-V-main/bui/CMakeFiles/code.dir
+/mnt/d/RISCV/RISC-V-main/bui/CMakeFiles/edit_cache.dir
+/mnt/d/RISCV/RISC-V-main/bui/CMakeFiles/rebuild_cache.dir

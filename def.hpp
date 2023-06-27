@@ -2,6 +2,7 @@
 #define __defi__
 
 #include <cstring>
+#include <iostream>
 
 using u32 = unsigned;
 using uc = unsigned char;
@@ -22,8 +23,9 @@ inline u32 sext_21(u32 x){
     return (x >> 20) ? (x | 0xffe00000) : x;
 }
 
-inline u32 get_num(u32 x, int l, int r){
-    return (x &((1 << r + 1) - 1)) >> l;
+inline u32 get_num(u32 x, u32 l, u32 r){
+    x >>= l;
+    return x ^ ((x >> (r - l + 1)) << (r - l + 1));
 }
 
 u32 pc = 0;
@@ -58,12 +60,13 @@ struct reg{
     }
 }r;
 
+int sze = 0;
 struct CDB{
     u32 en, val, pc;
-};
+}c[20];
 
-static const int siz = 4096;
 struct Ba{
+    static const int siz = 4096;
     u32 a[siz];
     Ba(){memset(a, 0, sizeof(a));}
     bool gue(u32 x){
