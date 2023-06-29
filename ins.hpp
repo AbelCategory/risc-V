@@ -141,6 +141,7 @@ void next_cur(){
     Z.next_cur();
     r.next_cur();
     s = __s;
+    if(is_br) nok = 1;
     if(nsk) npc = nxt;
     else npc = nc;
     ok = nok; sk = nsk;
