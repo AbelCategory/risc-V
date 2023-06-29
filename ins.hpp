@@ -5,15 +5,15 @@
 #include "tomasulo.hpp"
 
 static bool ok = 1, nok = 1;
-static bool sk = 1, nsk = 1;
+static int sk = 1, nsk = 1;
 static int imm = 0, ps = 0;
-static int npc = 0, nxt = 0, en =0;
+static int npc = 0, nxt = 0, en = 0, nc = 0;
 ins __s, s;
 void fetch_ins(){
     if(ok){
         pc = npc;
         __s = ins(npc, M.get_ins(npc));
-        if(!nsk) nxt = npc + 4;
+        nc = npc + 4;
     }
     else{
         if(Z[ps].sta){
@@ -24,7 +24,7 @@ void fetch_ins(){
     }
 }
 void decode(){
-    if(!ok || sk){nsk = 0; return;}
+    if(!ok || sk){nsk--; return;}
     if(Z.full()){nxt = pc; return;}
     if(s.op == U){
         ROB_dat x(s, s.rd, pc);
@@ -136,13 +136,17 @@ void next_cur(){
     Z.next_cur();
     r.next_cur();
     s = __s;
-    npc = nxt;
+    if(nsk) npc = nxt;
+    else npc = nc;
     ok = nok; sk = nsk;
+    is_br = 0;
 }
 
 void commit(){
     ROB_dat t = Z.top();
     if(!Z.empty() && t.sta){
+        // std::cout << t.pc << std::endl;
+        Z.pop();
         if(t.s.op == 233){
             printf("%u\n", (r[10])&255u);
             exit(0);
@@ -154,7 +158,8 @@ void commit(){
                 X.reset();
                 Y.reset();
                 r.reset();
-                sk = 1; nxt = t.dpc;
+                sk = nsk = 2; nxt = t.dpc;
+                is_br = 1;
             }
         }
         else if(t.s.op == S){
@@ -165,7 +170,6 @@ void commit(){
             r.mod(t.des, t.en, t.val);
             // if(f[a[l].des].pos == a[l].en) f[a[l].des].busy = 0;
         }
-        Z.pop();
     }
 }
 

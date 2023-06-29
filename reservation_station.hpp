@@ -19,6 +19,7 @@ struct RS{
     RS(){}
     bool full(){return len == sz;}
     void next_cur(){
+        if(is_br) nsz = 0;
         for(int i = 0; i < len; ++i)
             a[i] = b[i];
         sz = nsz;
@@ -35,9 +36,9 @@ struct RS{
         for(int i = 0; i < len; ++i) if(a[i].busy == 0){
             ROB_dat &cur = Z.b[a[i].en];
             switch(a[i].s.op){
-                case R: R_ALU(a[i].vj, a[i].vk, a[i].s, cur.val);
-                case I: I_ALU(a[i].vj, a[i].vk, a[i].s, cur.val);
-                case B: B_ALU(a[i].vj, a[i].vk, a[i].s.im, a[i].s, cur.val, cur.dpc);
+                case R: R_ALU(a[i].vj, a[i].vk, a[i].s, cur.val); break;
+                case I: I_ALU(a[i].vj, a[i].vk, a[i].s, cur.val); break;
+                case B: B_ALU(a[i].vj, a[i].vk, a[i].s.im, a[i].s, cur.val, cur.dpc); break;
             }
             c[sze ++] = (CDB){a[i].en, cur.pc, cur.val};
             b[i].busy = -1; cur.sta = 1;
@@ -60,6 +61,7 @@ struct RS{
     }
     void reset(){
         for(int i = 0; i < len; ++i) b[i] = RS_dat();
+        nsz = 0;
     }
 };
 

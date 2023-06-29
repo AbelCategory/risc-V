@@ -93,7 +93,7 @@ public:
         m.init();
         while (1) {
             unsigned ins = m.get(Register::pc); 
-            std::cout << Register::pc << " " << std::hex << ins << std::endl;
+            std::cout << Register::pc << std::endl;
             if (ins == 0x0ff00513) break;
             if (a.work(p.get_instruction(ins))) Register::pc += 4;;
             if (reg.x[0]) break;

@@ -1,0 +1,3 @@
+/mnt/d/RISCV/bui/CMakeFiles/code.dir
+/mnt/d/RISCV/bui/CMakeFiles/edit_cache.dir
+/mnt/d/RISCV/bui/CMakeFiles/rebuild_cache.dir

@@ -21,6 +21,7 @@ struct LS{
         int ti, pos;
     }Lo,St;
     inline void next_cur(){
+        if(is_br) nl = 0, nsz = 0;
         l = nl; sz = nsz;
         for(int i = 0; i < len; ++i) a[i] = b[i];
     }
@@ -62,18 +63,23 @@ struct LS{
         }
     }
     void commit(u32 en){
-        for(int i = 0; i < len; ++i) if(a[i].en == en){
+        for(int i = 0; i < len; ++i) if(a[i].sta == 2 && a[i].en == en){
             b[i].sta = 3;
             break;
         }
     }
     void reset(){
+        nsz = 0;
         for(int i = 0; i < sz; ++i){
             int x = (l + i) % len;
-            if(a[x].s.op != S && a[x].sta != 3){
+            if(a[x].s.op != S || a[x].sta != 3){
                 nsz = i + 1;
                 break;
             }
+        }
+        for(int i = sz; i < len; ++i){
+            int x = (l + i) % len;
+            b[x].sta = 0;
         }
     }
 };

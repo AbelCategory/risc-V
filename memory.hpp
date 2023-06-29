@@ -7,7 +7,7 @@
 #include "def.hpp"
 #include "parser.hpp"
 
-const static int N = 1e6+10;
+const static int N = 2e6+10;
 
 inline u32 ge(char x){return x > 64 ? x - 55 : x - 48;}
 

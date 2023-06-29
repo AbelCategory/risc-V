@@ -15,6 +15,8 @@ struct ROB_dat{
     ROB_dat(ins _s, u32 d, u32 p):en(0), s(_s), sta(0), des(d), pc(p), val(0), dpc(0){}
 };
 
+bool is_br = 0;
+
 struct ROB{
     static const int len = 32;
     ROB_dat a[len], b[len];
@@ -26,6 +28,7 @@ struct ROB{
         nl = (nl + 1) % len; --nsz;
     }
     void next_cur(){
+        if(is_br) nl = nsz = 0;
         for(int i = 0; i < len; ++i)
             a[i] = b[i];
         l = nl; sz = nsz;
