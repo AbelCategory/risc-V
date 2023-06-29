@@ -7,7 +7,7 @@
 static bool ok = 1, nok = 1;
 static bool sk = 1, nsk = 1;
 static int imm = 0, ps = 0;
-int npc = 0, nxt = 0;
+static int npc = 0, nxt = 0, en =0;
 ins __s, s;
 void fetch_ins(){
     if(ok){
@@ -18,7 +18,7 @@ void fetch_ins(){
     else{
         if(Z[ps].sta){
             nxt = imm + Z[ps].val;
-            nok = 1;
+            nok = 1; Z.b[en].sta = 1;
         }
         nsk = 1;
     }
@@ -67,8 +67,8 @@ void decode(){
         if(!r.busy[rs2]) y.vk = r[rs2];
         else if(Z[r.a[rs2]].sta) y.vk = Z[r.a[rs2]].val;
         else y.busy = 1, y.qk = r.a[rs2];
-        bool t = Br.gue(pc); x.val = t;
-        x.des = t;
+        bool t = Br.gue(pc);
+        x.des = t; x.dpc = pc;
         y.en = Z.push(x);
         Y.push(y);
         // if(t) pc += 4;
@@ -106,15 +106,15 @@ void decode(){
         ROB_dat x(s, s.rd, pc);
         x.val = pc + 4;
         int rs = s.rs1;
-        Z.push(x);
-        nsk = 1;
+        nsk = 1; x.sta = 1;
         if(!r.busy[rs]) nxt = r[rs] + s.im;
         else if(Z[r.a[rs]].sta) nxt = Z[r.a[rs]].val + s.im;
         else{
-            nok = 0;
+            nok = 0; x.sta = 0;
             imm = s.im;
             ps = r.a[rs];
         }
+        en = Z.push(x);
     }
     else{
         if(Y.full()){nxt = pc; return;}
@@ -138,6 +138,35 @@ void next_cur(){
     s = __s;
     npc = nxt;
     ok = nok; sk = nsk;
+}
+
+void commit(){
+    ROB_dat t = Z.top();
+    if(!Z.empty() && t.sta){
+        if(t.s.op == 233){
+            printf("%u\n", (r[10])&255u);
+            exit(0);
+        }
+        else if(t.s.op == B){
+            Br.upd(t.pc, t.val);
+            if(t.val != t.des){
+                Z.clear();
+                X.reset();
+                Y.reset();
+                r.reset();
+                sk = 1; nxt = t.dpc;
+            }
+        }
+        else if(t.s.op == S){
+            X.commit(t.en);
+        }
+        else{
+            // r[a[l].des] = a[l].val;
+            r.mod(t.des, t.en, t.val);
+            // if(f[a[l].des].pos == a[l].en) f[a[l].des].busy = 0;
+        }
+        Z.pop();
+    }
 }
 
 #endif

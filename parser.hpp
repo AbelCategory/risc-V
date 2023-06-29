@@ -61,7 +61,7 @@ u32 get_type(u32 x){
 u32 get_imm(u32 op, u32 x){
     switch(op){
         case I: return sext_12(get_num(x, 20, 31));
-        case S: return sext_12(get_num(x, 7, 11) | get_num(x, 5, 11) << 5);
+        case S: return sext_12(get_num(x, 7, 11) | get_num(x, 25, 31) << 5);
         case B: return sext_13(get_num(x, 8, 11) << 1 | get_num(x, 25, 30) << 5 | get_num(x, 7, 7) << 11 | get_num(x, 31, 31) << 12);
         case U: return get_num(x, 12, 31) << 12;
         case J: return sext_21(get_num(x, 21, 30) << 1 | get_num(x, 20, 20) << 11 | get_num(x, 12, 19) << 12 | get_num(x, 31, 31) << 20);

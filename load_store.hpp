@@ -36,7 +36,7 @@ struct LS{
                 b[i].vj = c.val;
             }
             if(b[i].s.op == S){
-                if(b[i].qk != -1 && a[i].qk == c.en) b[i].qk = -1, b[i].vk = c.val;
+                if(b[i].qk != -1 && b[i].qk == c.en) b[i].qk = -1, b[i].vk = c.val;
                 if(b[i].qj == -1 && b[i].qk == -1){
                     b[i].sta = 2;
                     Z.b[b[i].en].sta = 1;
@@ -50,11 +50,12 @@ struct LS{
             --b[l].ti;
             if(!b[l].ti){
                 if(a[l].s.op == I){
-                    Load_exe(a[l].vj, a[l].s.im, a[l].s, Z.b[a[l].en].val); 
+                    Load_exe(a[l].vj, a[l].s.im, a[l].s, Z.b[a[l].en].val);
                     c[sze ++] = (CDB){a[l].en, Z.b[a[l].en].pc, Z.b[a[l].en].val};
+                    Z.b[a[l].en].sta = 1;
                 }
                 else Store_exe(a[l].vj, a[l].vk, a[l].s, a[l].s.im);
-                Z.b[a[l].en].sta = 1; b[l].sta = 0;
+                b[l].sta = 0;
                 nl = (nl + 1) % len;
                 --nsz;
             }

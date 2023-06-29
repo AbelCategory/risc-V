@@ -22,31 +22,4 @@ void broadcast(){
     sze = 0;
 }
 
-void commit(){
-    ROB_dat t = Z.top();
-    if(!Z.empty() && t.sta){
-        if(t.s.op == 233){
-            printf("%u\n", (r[10])&255u);
-            exit(0);
-        }
-        else if(t.s.op == B){
-            Br.upd(t.pc, t.val);
-            if(t.val != t.des){
-                Z.clear();
-                X.reset();
-                Y.reset();
-            }
-        }
-        else if(t.s.op == S){
-            X.commit(t.en);
-        }
-        else{
-            // r[a[l].des] = a[l].val;
-            r.mod(t.des, t.en, t.val);
-            // if(f[a[l].des].pos == a[l].en) f[a[l].des].busy = 0;
-        }
-        Z.pop();
-    }
-}
-
 #endif

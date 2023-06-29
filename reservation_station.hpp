@@ -26,7 +26,7 @@ struct RS{
     void push(RS_dat y){
         for(int i = 0; i < len; ++i)
             if(a[i].busy == -1){
-                b[i] = y; ++sz;
+                b[i] = y; ++nsz;
                 break;
             }
     }
