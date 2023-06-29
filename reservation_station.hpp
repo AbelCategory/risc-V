@@ -34,6 +34,9 @@ struct RS{
     void exe(){
         int cnt = 0;
         for(int i = 0; i < len; ++i) if(a[i].busy == 0){
+            if(a[i].s.pc == 4248){
+                std::cerr << "??";
+            }
             ROB_dat &cur = Z.b[a[i].en];
             switch(a[i].s.op){
                 case R: R_ALU(a[i].vj, a[i].vk, a[i].s, cur.val); break;
@@ -47,7 +50,7 @@ struct RS{
     }
     void upd(CDB c){
         int cnt = 0;
-        for(int i = 0; i < len; ++i) if(b[i].busy == 1){
+        for(int i = 0; i < len; ++i) if(a[i].busy == 1){
             if(b[i].qj != -1 && b[i].qj == c.en){
                 b[i].qj = -1;
                 b[i].vj = c.val;

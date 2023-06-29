@@ -96,6 +96,10 @@ public:
             std::cout << std::hex << Register::pc << std::endl;
             if (ins == 0x0ff00513) break;
             if (a.work(p.get_instruction(ins))) Register::pc += 4;;
+
+            for(int i = 0; i < 32; ++i)
+                std::cout << std::dec << reg.x[i] << " ";
+            std::cout << std::endl;
             if (reg.x[0]) break;
         }
         cout << std::dec << (((unsigned int)reg.x[10]) & 255u) <<'\n';

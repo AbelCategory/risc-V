@@ -31,7 +31,7 @@ struct LS{
         ++nsz; b[p] = x; b[p].ti = 3;
     }
     void upd(CDB c){
-        for(int i = 0; i < len; ++i) if(b[i].sta != 3 && b[i].sta != 0){
+        for(int i = 0; i < len; ++i) if(a[i].sta != 3 && a[i].sta != 0){
             if(b[i].qj != -1 && b[i].qj == c.en){
                 b[i].qj = -1;
                 b[i].vj = c.val;
