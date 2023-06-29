@@ -150,7 +150,7 @@ void next_cur(){
 void commit(){
     ROB_dat t = Z.top();
     if(!Z.empty() && t.sta){
-        std::cout << std::hex << t.pc << std::endl;
+        // std::cout << std::hex << t.pc << std::endl;
         Z.pop();
         if(t.s.op == 233){
             printf("%u\n", (r[10])&255u);
@@ -175,7 +175,7 @@ void commit(){
             r.mod(t.des, t.en, t.val);
             // if(f[a[l].des].pos == a[l].en) f[a[l].des].busy = 0;
         }
-        for(int i = 0; i < 32; ++i) std::cout << std::dec << r.s[i] << " "; std::cout << std::endl;
+        // for(int i = 0; i < 32; ++i) std::cout << std::dec << r.s[i] << " "; std::cout << std::endl;
     }
 }
 

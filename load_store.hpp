@@ -31,12 +31,13 @@ struct LS{
         ++nsz; b[p] = x; b[p].ti = 3;
     }
     void upd(CDB c){
-        for(int i = 0; i < len; ++i) if(a[i].sta != 3 && a[i].sta != 0){
+        for(int i = 0; i < len; ++i) if(b[i].sta != 3 && b[i].sta != 0){
             if(b[i].qj != -1 && b[i].qj == c.en){
                 b[i].qj = -1;
                 b[i].vj = c.val;
             }
             if(b[i].s.op == S){
+                if(b[i].sta == 2) continue;
                 if(b[i].qk != -1 && b[i].qk == c.en) b[i].qk = -1, b[i].vk = c.val;
                 if(b[i].qj == -1 && b[i].qk == -1){
                     b[i].sta = 2;
@@ -73,7 +74,7 @@ struct LS{
         for(int i = 0; i < sz; ++i){
             int x = (l + i) % len;
             if(a[x].s.op != S || a[x].sta != 3){
-                nsz = i + 1;
+                nsz = i;
                 break;
             }
         }
