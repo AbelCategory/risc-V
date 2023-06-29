@@ -18,8 +18,12 @@ struct RS{
     int sz = 0, nsz = 0;
     RS(){}
     bool full(){return len == sz;}
+    void reset(){
+        for(int i = 0; i < len; ++i) b[i] = RS_dat();
+        nsz = 0;
+    }
     void next_cur(){
-        if(is_br) nsz = 0;
+        if(is_br) reset();
         for(int i = 0; i < len; ++i)
             a[i] = b[i];
         sz = nsz;
@@ -61,10 +65,6 @@ struct RS{
             }
             if(b[i].qj == -1 && b[i].qk == -1) b[i].busy = 0;
         }
-    }
-    void reset(){
-        for(int i = 0; i < len; ++i) b[i] = RS_dat();
-        nsz = 0;
     }
 };
 

@@ -39,12 +39,19 @@ u32 pc = 0;
 //     int pos;
 // }f[32];
 
+bool is_br = 0;
+
 struct reg{
     static const int L = 32;
     u32 r[L], s[L];
     bool busy[L], nb[L];
     int a[L], b[L];
+    void reset(){
+        for(int i = 0; i < L; ++i)
+            b[i] = 0, nb[i] = 0;
+    }
     void next_cur(){
+        if(is_br) reset();
         for(int i = 0; i < L; ++i){
             a[i] = b[i];
             r[i] = s[i];
@@ -63,10 +70,6 @@ struct reg{
         if(x == 0) return;
         s[x] = v;
         nb[x] = p != a[x];
-    }
-    void reset(){
-        for(int i = 0; i < L; ++i)
-            b[i] = 0, nb[i] = 0;
     }
 }r;
 

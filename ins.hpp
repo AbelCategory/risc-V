@@ -160,10 +160,10 @@ void commit(){
         else if(t.s.op == B){
             Br.upd(t.pc, t.val);
             if(t.val != t.des){
-                Z.clear();
-                X.reset();
-                Y.reset();
-                r.reset();
+                // Z.clear();
+                // X.reset();
+                // Y.reset();
+                // r.reset();
                 sk = nsk = 2; nxt = t.dpc;
                 is_br = 1;
             }

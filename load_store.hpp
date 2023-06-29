@@ -19,9 +19,24 @@ struct LS{
     struct ex{
         int ti, pos;
     }Lo,St;
+    void reset(){
+        // nsz = 0;
+        for(int i = 0; i < nsz; ++i){
+            int x = (nl + i) % len;
+            if(a[x].s.op != S || a[x].sta != 3){
+                nsz = i;
+                break;
+            }
+        }
+        // ff_l = l; ff_sz = nsz;
+        for(int i = nsz; i < len; ++i){
+            int x = (nl + i) % len;
+            b[x].sta = 0;
+        }
+    }
     inline void next_cur(){
-        // if(is_br) nl = ff_l, nsz = ff_sz;
-        // b[(nl + nsz) % len].sta = 0;
+        if(is_br) reset();
+        b[(nl + nsz) % len].sta = 0;
         l = nl; sz = nsz;
         for(int i = 0; i < len; ++i) a[i] = b[i];
     }
@@ -72,21 +87,6 @@ struct LS{
         for(int i = 0; i < len; ++i) if(a[i].sta == 2 && a[i].en == en){
             b[i].sta = 3;
             break;
-        }
-    }
-    void reset(){
-        // nsz = 0;
-        for(int i = 0; i < sz; ++i){
-            int x = (l + i) % len;
-            if(a[x].s.op != S || a[x].sta != 3){
-                nsz = i;
-                break;
-            }
-        }
-        // ff_l = l; ff_sz = nsz;
-        for(int i = sz; i < len; ++i){
-            int x = (l + i) % len;
-            b[x].sta = 0;
         }
     }
 };
