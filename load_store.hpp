@@ -8,7 +8,7 @@ struct LS_dat{
     ins s; int sta, ti;
     u32 vj, vk, en;
     int qj, qk;
-    LS_dat():qj(0), qk(0), vj(0), vk(0), ti(0), en(0), sta(0){}
+    LS_dat():qj(0), qk(0), vj(0), vk(0), ti(0), en(0), sta(0),s(){}
 };
 
 

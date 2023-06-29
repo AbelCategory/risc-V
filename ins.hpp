@@ -26,6 +26,11 @@ void fetch_ins(){
 void decode(){
     if(!ok || sk){nsk--; return;}
     if(Z.full()){nxt = pc; return;}
+    if(s.op == 233){
+        ROB_dat x(s, 0, pc); x.sta = 1;
+        Z.push(x);
+        return;
+    }
     if(s.op == U){
         ROB_dat x(s, s.rd, pc);
         x.sta = 1;

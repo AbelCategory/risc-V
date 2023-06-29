@@ -75,6 +75,7 @@ struct ins{
     u32 im; u32 op;
     ins(){opt = t = pc = rs1 = rs2 = rd = im = op = 0;}
     ins(u32 p, u32 x){
+        opt = t = pc = rs1 = rs2 = rd = im = op = 0;
         if(x == 0x0ff00513){
             op = 233;
             return;

@@ -11,7 +11,7 @@ struct ROB_dat{
     ins s;
     bool sta;
     u32 des, val, pc, dpc;
-    ROB_dat():en(0), sta(0), des(0), val(0), pc(0), dpc(0){}
+    ROB_dat():en(0), sta(0), des(0), val(0), pc(0), dpc(0),s(){}
     ROB_dat(ins _s, u32 d, u32 p):en(0), s(_s), sta(0), des(d), pc(p), val(0), dpc(0){}
 };
 

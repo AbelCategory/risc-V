@@ -8,7 +8,7 @@ struct RS_dat{
     int busy;
     ins s;
     u32 vj, vk, en; int qj, qk;
-    RS_dat():busy(-1),qj(0),qk(0),vj(0),vk(0), en(0){}
+    RS_dat():busy(-1),qj(0),qk(0),vj(0),vk(0), en(0),s(){}
 };
 
 

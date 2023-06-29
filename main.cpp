@@ -6,7 +6,7 @@
 int cnt = 0;
 
 int main(){
-    // freopen("testcases/bulgarian.data","r",stdin);
+    // freopen("sample/sample.data","r",stdin);
     // freopen("log.txt","w",stdout);
     M.init();
     while(1){
@@ -21,7 +21,7 @@ int main(){
         broadcast();
         next_cur();
         // if(!sk) std::cout << "pc: " << std::hex << pc << std::endl;
-        // if(cnt == 100000) break;
+        // if(cnt == 100) break;
     }
     return 0;
 }
