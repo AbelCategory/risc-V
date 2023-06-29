@@ -11,7 +11,7 @@ struct LS_dat{
     LS_dat():qj(0), qk(0), vj(0), vk(0), ti(0), en(0), sta(0),s(){}
 };
 
-
+int ff_l, ff_sz;
 struct LS{
     static const int len = 32;
     LS_dat a[len], b[len];
@@ -21,7 +21,8 @@ struct LS{
         int ti, pos;
     }Lo,St;
     inline void next_cur(){
-        if(is_br) nl = 0, nsz = 0;
+        if(is_br) nl = ff_l, nsz = ff_sz;
+        b[(nl + nsz) % len].sta = 0;
         l = nl; sz = nsz;
         for(int i = 0; i < len; ++i) a[i] = b[i];
     }
@@ -48,9 +49,14 @@ struct LS{
         }
     }
     void exe(){
+        // static int tt_cnt = 0;
         if(sz && a[l].sta == 3){
             --b[l].ti;
             if(!b[l].ti){
+                // if(a[l].s.pc == 0x1054){
+                //     ++tt_cnt;
+                //     std::cerr << tt_cnt << std::endl;
+                // }
                 if(a[l].s.op == I){
                     Load_exe(a[l].vj, a[l].s.im, a[l].s, Z.b[a[l].en].val);
                     c[sze ++] = (CDB){a[l].en, Z.b[a[l].en].pc, Z.b[a[l].en].val};
@@ -70,7 +76,7 @@ struct LS{
         }
     }
     void reset(){
-        nsz = 0;
+        // nsz = 0;
         for(int i = 0; i < sz; ++i){
             int x = (l + i) % len;
             if(a[x].s.op != S || a[x].sta != 3){
@@ -78,6 +84,7 @@ struct LS{
                 break;
             }
         }
+        ff_l = l; ff_sz = nsz;
         for(int i = sz; i < len; ++i){
             int x = (l + i) % len;
             b[x].sta = 0;

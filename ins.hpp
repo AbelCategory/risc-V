@@ -148,6 +148,7 @@ void next_cur(){
 }
 
 void commit(){
+    // static int tt_cnt = 0;
     ROB_dat t = Z.top();
     if(!Z.empty() && t.sta){
         // std::cout << std::hex << t.pc << std::endl;
@@ -168,6 +169,10 @@ void commit(){
             }
         }
         else if(t.s.op == S){
+            // if(t.s.pc == 0x1054){
+            //     ++tt_cnt;
+            //     std::cerr << tt_cnt << std::endl;
+            // }
             X.commit(t.en);
         }
         else{
