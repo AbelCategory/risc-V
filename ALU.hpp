@@ -21,9 +21,9 @@ inline void R_ALU(u32 rs1, u32 rs2, ins &s, u32 &rd){
 
 inline void I_ALU(u32 rs1, u32 im, ins &s, u32 &rd){
     if(s.opt == JALR){
-        u32 t = pc + 4;
-        pc = (rs1 + sext_12(rs1));
-        rd = t;
+        // u32 t = pc + 4;
+        // pc = (rs1 + sext_12(rs1));
+        // rd = t;
         return;
     }
     switch(s.opt){

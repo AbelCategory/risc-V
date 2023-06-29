@@ -19,6 +19,10 @@ inline u32 sext_12(u32 x){
     return (x >> 11) ? (x | 0xfffff000) : x;
 }
 
+inline u32 sext_13(u32 x){
+    return (x >> 12) ? (x | 0xffffe000) : x;
+}
+
 inline u32 sext_21(u32 x){
     return (x >> 20) ? (x | 0xffe00000) : x;
 }
@@ -51,10 +55,12 @@ struct reg{
         return r[x];
     }
     inline void upd(int x, u32 p){
+        if(x == 0) return;
         b[x] = p;
         nb[x] = 1;
     }
     inline void mod(int x, u32 p, u32 v){
+        if(x == 0) return;
         s[x] = v;
         nb[x] = p != a[x];
     }
@@ -62,7 +68,7 @@ struct reg{
 
 int sze = 0;
 struct CDB{
-    u32 en, val, pc;
+    u32 en, pc, val;
 }c[20];
 
 struct Ba{

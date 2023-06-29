@@ -52,18 +52,19 @@ u32 get_type(u32 x){
     u32 t = x & 127;
     if(t == LUI || t == AUI) return U;
     if(t == JAL) return J;
-    if(t == JALR || t == 0b0000011) return I;
+    if(t == JALR || t == 0b0000011 || t == 0b0010011) return I;
     if(t == 0b0100011) return S;
     if(t == 0b0110011) return R;
+    if(t == 0b1100011) return B;
 }
 
 u32 get_imm(u32 op, u32 x){
     switch(op){
-        case I: return get_num(x, 20, 31);
-        case S: return get_num(x, 7, 11) | get_num(x, 5, 11) << 5;
-        case B: return get_num(x, 8, 11) << 1 | get_num(x, 25, 30) << 5 | get_num(x, 7, 7) << 11 | get_num(x, 31, 31) << 12;
+        case I: return sext_12(get_num(x, 20, 31));
+        case S: return sext_12(get_num(x, 7, 11) | get_num(x, 5, 11) << 5);
+        case B: return sext_13(get_num(x, 8, 11) << 1 | get_num(x, 25, 30) << 5 | get_num(x, 7, 7) << 11 | get_num(x, 31, 31) << 12);
         case U: return get_num(x, 12, 31) << 12;
-        case J: return get_num(x, 21, 30) << 1 | get_num(x, 20, 20) << 11 | get_num(x, 12, 19) << 12 | get_num(x, 31, 31) << 20;
+        case J: return sext_21(get_num(x, 21, 30) << 1 | get_num(x, 20, 20) << 11 | get_num(x, 12, 19) << 12 | get_num(x, 31, 31) << 20);
         case R: return 0;
     }
 }
@@ -89,11 +90,17 @@ struct ins{
         if(op == U || op == J) opt = t;
         else if(op == I){
             if(t == JALR) opt = JALR;
-            else opt = get_num(x, 27, 30) | get_num(x, 12, 14);
+            else if(t == 0b0000011) opt = get_num(x, 12, 14);
+            else{
+                int cur = get_num(x, 12, 14);
+                if(cur == 0b001 || cur == 0b101) opt = get_num(x, 27, 30) | get_num(x, 12, 14);
+                else opt = cur;
+            }
         }
-        if(op != B && op != S) rd = get_num(x, 7, 11);
         else if(op == B || op == S) opt = get_num(x, 12, 14);
         else if(op == R) opt = get_num(x, 27, 30) | get_num(x, 12, 14);
+        if(op != B && op != S) rd = get_num(x, 7, 11);
+        else rd = 0;
         if(op == I && (opt == SLLI || opt == SRLI || opt == SRAI)) im = get_num(x, 20, 24);
         else im = get_imm(op, x);
     }

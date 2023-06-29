@@ -47,11 +47,11 @@ struct RS{
     void upd(CDB c){
         int cnt = 0;
         for(int i = 0; i < len; ++i) if(b[i].busy == 1){
-            if(b[i].qj != -1 && a[i].qj == c.en){
+            if(b[i].qj != -1 && b[i].qj == c.en){
                 b[i].qj = -1;
                 b[i].vj = c.val;
             }
-            if(b[i].qk != -1 && a[i].qk == c.en){
+            if(b[i].qk != -1 && b[i].qk == c.en){
                 b[i].qk = -1;
                 b[i].vk = c.val;
             }

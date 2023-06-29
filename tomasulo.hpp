@@ -22,13 +22,6 @@ void broadcast(){
     sze = 0;
 }
 
-void next_cur(){
-    X.next_cur();
-    Y.next_cur();
-    Z.next_cur();
-    r.next_cur();
-}
-
 void commit(){
     ROB_dat t = Z.top();
     if(!Z.empty() && t.sta){

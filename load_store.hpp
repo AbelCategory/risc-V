@@ -30,20 +30,23 @@ struct LS{
         ++nsz; b[p] = x; b[p].ti = 3;
     }
     void upd(CDB c){
-        for(int i = 0; i < len; ++i) if(a[i].sta == 1){
-            if(b[i].qj != -1 && a[i].qj == c.en){
+        for(int i = 0; i < len; ++i) if(b[i].sta != 3 && b[i].sta != 0){
+            if(b[i].qj != -1 && b[i].qj == c.en){
                 b[i].qj = -1;
                 b[i].vj = c.val;
             }
             if(b[i].s.op == S){
                 if(b[i].qk != -1 && a[i].qk == c.en) b[i].qk = -1, b[i].vk = c.val;
-                if(b[i].qj == -1 && b[i].qk == -1) b[i].sta = 2;
+                if(b[i].qj == -1 && b[i].qk == -1){
+                    b[i].sta = 2;
+                    Z.b[b[i].en].sta = 1;
+                }
             }
             else if(b[i].qj == -1) b[i].sta = 3;
         }
     }
     void exe(){
-        if(a[l].ti){
+        if(sz && a[l].sta == 3){
             --b[l].ti;
             if(!b[l].ti){
                 if(a[l].s.op == I){
@@ -51,12 +54,10 @@ struct LS{
                     c[sze ++] = (CDB){a[l].en, Z.b[a[l].en].pc, Z.b[a[l].en].val};
                 }
                 else Store_exe(a[l].vj, a[l].vk, a[l].s, a[l].s.im);
-                Z.b[a[l].en].sta = 1;
+                Z.b[a[l].en].sta = 1; b[l].sta = 0;
+                nl = (nl + 1) % len;
+                --nsz;
             }
-        }
-        else if(a[(l + 1) % len].sta == 3 && sz > 1){
-            nl = (nl + 1) % len;
-            --nsz;
         }
     }
     void commit(u32 en){
