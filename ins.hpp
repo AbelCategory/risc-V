@@ -7,10 +7,11 @@
 static bool ok = 1, nok = 1;
 static int sk = 1, nsk = 1;
 static int imm = 0, ps = 0;
-static int npc = 0, nxt = 0, en = 0, nc = 0;
+static int npc = 0, nxt = 0, en = 0, nc = 0, stu = 0, nz = 0;
 ins __s, s;
 void fetch_ins(){
     if(ok){
+        if(stu){stu = 0; return;}
         pc = npc;
         __s = ins(npc, M.get_ins(npc));
         nc = npc + 4;
@@ -25,7 +26,7 @@ void fetch_ins(){
 }
 void decode(){
     if(!ok || sk){nsk--; return;}
-    if(Z.full()){nxt = pc; return;}
+    if(Z.full()){stu = 1; return;}
     if(s.op == 233){
         ROB_dat x(s, 0, pc); x.sta = 1;
         Z.push(x);
@@ -46,7 +47,7 @@ void decode(){
         nxt = pc + s.im; nsk = 1;
     }
     else if(s.op == R){
-        if(Y.full()) {nxt = pc; return;}
+        if(Y.full()) {stu = 1; return;}
         ROB_dat x(s, s.rd, pc);
         RS_dat y; y.busy = 0;
         int rs1 = s.rs1, rs2 = s.rs2;
@@ -61,7 +62,7 @@ void decode(){
         Y.push(y);
     }
     else if(s.op == B){
-        if(Y.full()) {nxt = pc; return;}
+        if(Y.full()) {stu = 1; return;}
         ROB_dat x(s, 0, pc);
         RS_dat y; y.busy = 0;
         int rs1 = s.rs1, rs2 = s.rs2;
@@ -81,7 +82,7 @@ void decode(){
         if(t) nxt = pc + s.im, nsk = 1;
     }
     else if(s.op == S){
-        if(X.full()){nxt = pc; return;}
+        if(X.full()){stu = 1; return;}
         ROB_dat x(s, 0, pc); x.sta = 1;
         LS_dat y; y.sta = 2;
         int rs1 = s.rs1, rs2 = s.rs2;
@@ -96,7 +97,7 @@ void decode(){
         X.push(y);
     }
     else if(s.t == 0b0000011){
-        if(X.full()){nxt = pc; return;}
+        if(X.full()){stu = 1; return;}
         ROB_dat x(s, s.rd, pc);
         LS_dat y; y.sta = 3;
         int rs = s.rs1;
@@ -122,7 +123,7 @@ void decode(){
         en = Z.push(x);
     }
     else{
-        if(Y.full()){nxt = pc; return;}
+        if(Y.full()){stu = 1; return;}
         ROB_dat x(s, s.rd, pc);
         RS_dat y; y.busy = 0;
         int rs = s.rs1;
@@ -140,10 +141,12 @@ void next_cur(){
     Y.next_cur();
     Z.next_cur();
     r.next_cur();
-    s = __s;
-    if(is_br) nok = 1;
-    if(nsk) npc = nxt;
-    else npc = nc;
+    if(is_br) nok = 1, stu = 0, nsk = 1, nxt = nz;
+    if(!stu){
+        if(nsk) npc = nxt;
+        else npc = nc;
+        s = __s;
+    }
     ok = nok; sk = nsk;
     is_br = 0;
 }
@@ -161,11 +164,7 @@ void commit(){
         else if(t.s.op == B){
             Br.upd(t.pc, t.val);
             if(t.val != t.des){
-                // Z.clear();
-                // X.reset();
-                // Y.reset();
-                // r.reset();
-                sk = nsk = 2; nxt = t.dpc;
+                nz = t.dpc;
                 is_br = 1;
             }
         }

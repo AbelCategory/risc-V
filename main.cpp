@@ -6,7 +6,7 @@
 int cnt = 0;
 
 int main(){
-    // freopen("testcases/bulgarian.data","r",stdin);
+    // freopen("testcases/pi.data","r",stdin);
     // freopen("log.txt","w",stdout);
     M.init();
     while(1){
