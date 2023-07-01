@@ -46,15 +46,17 @@ struct reg{
     u32 r[L], s[L];
     bool busy[L], nb[L];
     int a[L], b[L];
+    reg(){memset(b, -1, sizeof(b));}
     void reset(){
         for(int i = 0; i < L; ++i)
-            b[i] = 0, nb[i] = 0;
+            b[i] = -1, nb[i] = 0;
     }
     void next_cur(){
         if(is_br) reset();
         for(int i = 0; i < L; ++i){
             a[i] = b[i];
             r[i] = s[i];
+            if(!nb[i] && b[i] != -1) nb[i] = 1;
             busy[i] = nb[i];
         }
     }
@@ -69,7 +71,10 @@ struct reg{
     inline void mod(int x, u32 p, u32 v){
         if(x == 0) return;
         s[x] = v;
-        nb[x] = p != a[x];
+        if(p == a[x]){
+            if(p == b[x]) b[x] = -1;
+            nb[x] = p != a[x];
+        }
     }
 }r;
 
@@ -88,8 +93,8 @@ struct Ba{
     }
     void upd(u32 x, bool ok){
         u32 t = x & 0x0fff;
-        if(ok && a[t] == 2) ++a[t];
-        else if(!ok && a[t] == 1) --a[t]; 
+        if(ok && a[t] <= 2) ++a[t];
+        else if(!ok && a[t] >= 1) --a[t]; 
     }
 }Br;
 

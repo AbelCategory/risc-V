@@ -12,7 +12,7 @@ ins __s, s;
 void fetch_ins(){
     if(ok){
         if(stu){stu = 0; return;}
-        pc = npc;
+        // pc = npc;
         __s = ins(npc, M.get_ins(npc));
         nc = npc + 4;
     }
@@ -27,6 +27,9 @@ void fetch_ins(){
 void decode(){
     if(!ok || sk){nsk--; return;}
     if(Z.full()){stu = 1; return;}
+    pc = s.pc;
+    // std::cerr << pc << std::endl;
+    // if(pc > 0x1300) exit(0);
     if(s.op == 233){
         ROB_dat x(s, 0, pc); x.sta = 1;
         Z.push(x);
@@ -151,6 +154,10 @@ void next_cur(){
     is_br = 0;
 }
 
+int branch_cnt, ac_cnt;
+
+int cnt_clock = 0;
+
 void commit(){
     // static int tt_cnt = 0;
     ROB_dat t = Z.top();
@@ -159,14 +166,19 @@ void commit(){
         Z.pop();
         if(t.s.op == 233){
             printf("%u\n", (r[10])&255u);
+            std::cerr << "time_clock: " << cnt_clock << std::endl;
+            std::cerr << "right_branch: " << ac_cnt << ", total_branch: " << branch_cnt << std::endl;
+            std::cerr << "accuray: " << ac_cnt / double(branch_cnt) * 100 << "%" << std::endl;
             exit(0);
         }
         else if(t.s.op == B){
             Br.upd(t.pc, t.val);
+            ++ branch_cnt;
             if(t.val != t.des){
                 nz = t.dpc;
                 is_br = 1;
             }
+            else ++ac_cnt;
         }
         else if(t.s.op == S){
             // if(t.s.pc == 0x1054){
