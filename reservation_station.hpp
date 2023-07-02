@@ -42,6 +42,9 @@ struct RS{
             //     std::cerr << "??";
             // }
             ROB_dat &cur = Z.b[a[i].en];
+            if(a[i].en == 23 && cur.pc == 5704){
+                std::cerr << "???" << std::endl;
+            }
             switch(a[i].s.op){
                 case R: R_ALU(a[i].vj, a[i].vk, a[i].s, cur.val); break;
                 case I: I_ALU(a[i].vj, a[i].vk, a[i].s, cur.val); break;

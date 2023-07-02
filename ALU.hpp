@@ -42,14 +42,13 @@ inline void I_ALU(u32 rs1, u32 im, ins &s, u32 &rd){
 inline void B_ALU(u32 rs1, u32 rs2, u32 im, ins &s, u32 &rd, u32 &pc){
     rd = 0;
     switch(s.opt){
-        case BEQ : (rs1 == rs2) && (rd = 1, pc += im); return;
-        case BNE : (rs1 != rs2) && (rd = 1, pc += im); return;
-        case BLT : (int(rs1) < int(rs2)) && (rd = 1, pc += im); return;
-        case BGE : (int(rs1) >= int(rs2)) && (rd = 1, pc += im); return;
-        case BLTU: (rs1 < rs2) && (rd = 1, pc += im); return;
-        case BGEU: (rs1 >= rs2) && (rd = 1, pc += im); return;
+        case BEQ : (rs1 == rs2) ? (rd = 1, pc += im) : (pc += 4); return;
+        case BNE : (rs1 != rs2) ? (rd = 1, pc += im) : (pc += 4); return;
+        case BLT : (int(rs1) < int(rs2)) ? (rd = 1, pc += im) : (pc += 4); return;
+        case BGE : (int(rs1) >= int(rs2)) ? (rd = 1, pc += im) : (pc += 4); return;
+        case BLTU: (rs1 < rs2) ? (rd = 1, pc += im) : (pc += 4); return;
+        case BGEU: (rs1 >= rs2) ? (rd = 1, pc += im) : (pc += 4); return;
     }
-    pc += 4;
 }
 
 // inline void J_exe(u32 &rd, u32 im, ins &s, u32 &pc){
